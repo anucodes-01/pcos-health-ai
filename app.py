@@ -1,130 +1,270 @@
 import streamlit as st
 
-# -----------------------------------
-# Page Configuration
-# -----------------------------------
-st.set_page_config(
-    page_title="Female Health AI",
-    page_icon="🌸",
-    layout="centered"
+st.title("PCOS Health AI")
+st.caption("Early pattern detection • Not a medical diagnosis")
+
+st.markdown("---")
+st.subheader("Step 1: Personal & Cycle Information")
+
+age = st.slider("Age", 13, 50, 22)
+
+cycle_length = st.selectbox(
+    "How regular is your menstrual cycle?",
+    [
+        "Regular (25–35 days)",
+        "Irregular (varies frequently)",
+        "Absent for months"
+    ]
 )
 
-# -----------------------------------
-# Sidebar Navigation
-# -----------------------------------
-st.sidebar.title("🌸 Female Health AI")
-page = st.sidebar.radio(
-    "Navigate",
-    ["Home", "Health Check", "Follow-up", "About"]
+period_pain = st.radio(
+    "Do you experience severe period pain?",
+    ["No", "Sometimes", "Often"]
 )
 
-# -----------------------------------
-# HOME PAGE
-# -----------------------------------
-if page == "Home":
-    st.title("Female Healthcare Support System")
-    st.subheader("PCOS / PCOD Early Awareness Tool")
+st.markdown("---")
+st.subheader("Step 2: Metabolic & Physical Signals")
 
-    st.write("""
-    This application helps women gain **early awareness**
-    about PCOS/PCOD and related health concerns.
+weight_change = st.selectbox(
+    "Have you experienced unexplained weight changes?",
+    ["No", "Weight gain", "Weight loss", "Fluctuates"]
+)
 
-    **Workflow followed:**
-    Ask → Detect → Respond → Follow-up
-    """)
+sugar_cravings = st.radio(
+    "Do you experience strong sugar cravings?",
+    ["No", "Occasionally", "Frequently"]
+)
 
-    st.info("⚠️ This tool is for awareness only. It is NOT a medical diagnosis.")
+facial_hair = st.radio(
+    "Do you notice excess facial/body hair growth?",
+    ["No", "Mild", "Noticeable"]
+)
 
-# -----------------------------------
-# HEALTH CHECK PAGE
-# -----------------------------------
-elif page == "Health Check":
-    st.title("🩺 Health Check")
+st.markdown("---")
+st.subheader("Step 3: Mental & Stress Signals")
 
-    st.subheader("Basic Information")
-    age = st.slider("Age", 13, 50, 22)
-    height = st.number_input("Height (cm)", 130, 200, 160)
-    weight = st.number_input("Weight (kg)", 35, 120, 55)
+stress_level = st.slider(
+    "Average stress level (last 3 months)",
+    0, 10, 5
+)
 
-    st.subheader("Symptoms")
-    irregular_periods = st.checkbox("Irregular periods")
-    acne = st.checkbox("Acne issues")
-    hair_issues = st.checkbox("Hair fall / excessive hair growth")
-    fatigue = st.checkbox("Frequent fatigue")
-    mood_swings = st.checkbox("Mood swings / anxiety")
-    sleep_issues = st.checkbox("Sleep problems")
+sleep_quality = st.selectbox(
+    "How is your sleep quality?",
+    ["Good", "Disturbed", "Insomnia / very poor"]
+)
 
-    st.subheader("Lifestyle")
-    stress_level = st.slider("Stress level (1 = low, 10 = high)", 1, 10, 5)
-    exercise = st.selectbox(
-        "Exercise frequency",
-        ["Rarely", "1–2 times/week", "3–5 times/week", "Daily"]
+mood_changes = st.radio(
+    "Do you notice mood swings or emotional burnout?",
+    ["No", "Occasionally", "Frequently"]
+)
+
+st.markdown("---")
+st.subheader("Step 4: Lifestyle Factors")
+
+activity_level = st.selectbox(
+    "Physical activity level",
+    ["Sedentary", "Lightly active", "Moderately active", "Very active"]
+)
+
+diet_pattern = st.selectbox(
+    "Diet pattern",
+    ["Balanced", "High sugar / processed", "Low-carb / controlled", "Irregular"]
+)
+
+submit = st.button("Analyze My Health Patterns")
+if submit:
+    st.markdown("## 🧠 Step 2: Understanding Your Health Signals")
+
+    # -----------------------------
+    # SIGNAL EXTRACTION
+    # -----------------------------
+    cycle_signal = 0
+    stress_signal = 0
+    insulin_signal = 0
+    androgen_signal = 0
+    inflammation_signal = 0
+
+    # Cycle irregularity
+    if cycle_length == "Irregular (varies frequently)":
+        cycle_signal += 2
+    elif cycle_length == "Absent for months":
+        cycle_signal += 3
+
+    # Stress & adrenal signals (threshold-based)
+    if stress_level >= 7:
+        stress_signal += 4
+    elif stress_level >= 4:
+        stress_signal += 2
+
+    if sleep_quality == "Disturbed":
+        stress_signal += 1
+    elif sleep_quality == "Insomnia / very poor":
+        stress_signal += 2
+
+    if mood_changes == "Frequently":
+        stress_signal += 2
+
+    # Insulin resistance signals
+    if sugar_cravings == "Frequently":
+        insulin_signal += 3
+    elif sugar_cravings == "Occasionally":
+        insulin_signal += 1
+
+    if weight_change in ["Weight gain", "Fluctuates"]:
+        insulin_signal += 2
+
+    # Androgen signals
+    if facial_hair == "Noticeable":
+        androgen_signal += 3
+    elif facial_hair == "Mild":
+        androgen_signal += 1
+
+    # Inflammatory signals
+    if period_pain == "Often":
+        inflammation_signal += 2
+
+    if sleep_quality != "Good":
+        inflammation_signal += 1
+
+    # -----------------------------
+    # PCOS TYPE DETECTION
+    # -----------------------------
+    pcos_type = "Low / Unclear PCOS Pattern"
+    explanation = ""
+
+    if stress_signal >= 7 and insulin_signal < 4:
+        pcos_type = "Adrenal PCOS (Stress-driven)"
+        explanation = (
+            "Your responses show strong stress and adrenal-related signals. "
+            "This PCOS type is commonly underdiagnosed and linked to chronic stress."
+        )
+
+    elif insulin_signal >= 6:
+        pcos_type = "Insulin-Resistant PCOS"
+        explanation = (
+            "Metabolic indicators such as sugar cravings and weight changes "
+            "suggest insulin resistance, a common PCOS driver."
+        )
+
+    elif cycle_signal >= 3 and insulin_signal <= 2:
+        pcos_type = "Lean PCOS"
+        explanation = (
+            "Despite limited metabolic symptoms, your menstrual irregularities "
+            "suggest a hormonal imbalance consistent with Lean PCOS."
+        )
+
+    elif inflammation_signal >= 3:
+        pcos_type = "Inflammatory PCOS"
+        explanation = (
+            "Pain, fatigue, and inflammatory indicators dominate your symptom pattern."
+        )
+
+    # -----------------------------
+    # OVERALL PCOS RISK SCORING
+    # -----------------------------
+    total_risk_score = (
+        cycle_signal +
+        stress_signal +
+        insulin_signal +
+        androgen_signal +
+        inflammation_signal
     )
 
-    if st.button("Check Health Risk"):
-        # Mock logic (temporary)
-        if irregular_periods and (fatigue or acne):
-            risk = "High"
-            pattern = "Hormonal / Lifestyle related"
-        elif fatigue or mood_swings or stress_level > 6:
-            risk = "Medium"
-            pattern = "Stress & lifestyle related"
-        else:
-            risk = "Low"
-            pattern = "Low visible risk"
+    if total_risk_score <= 6:
+        risk_level = "Low Risk"
+        risk_color = "green"
+    elif total_risk_score <= 12:
+        risk_level = "Moderate Risk"
+        risk_color = "orange"
+    else:
+        risk_level = "High Risk"
+        risk_color = "red"
 
-        st.subheader("📊 Result")
+    # -----------------------------
+    # DISPLAY RESULTS
+    # -----------------------------
+    st.markdown("## ⚠️ Step 3: Overall PCOS Risk Assessment")
 
-        if risk == "High":
-            st.error("🔴 High Risk")
-        elif risk == "Medium":
-            st.warning("🟡 Medium Risk")
-        else:
-            st.success("🟢 Low Risk")
+    st.progress(min(total_risk_score / 20, 1.0))
 
-        st.write(f"**Dominant pattern:** {pattern}")
-        st.info("Please consult a healthcare professional for medical advice.")
+    st.markdown(
+        f"<h3 style='color:{risk_color}'>Risk Level: {risk_level}</h3>",
+        unsafe_allow_html=True
+    )
 
-# -----------------------------------
-# FOLLOW-UP PAGE
-# -----------------------------------
-elif page == "Follow-up":
-    st.title("📌 Follow-up & Guidance")
+    st.markdown("## 🔍 Step 4: Detected PCOS Pattern")
+    st.success(f"**Detected Pattern:** {pcos_type}")
+    st.write(explanation)
 
-    st.write("""
-    Taking care of hormonal health is a long-term process.
-    Small, consistent steps can make a big difference.
-    """)
+    st.markdown("### 🔎 Key Contributing Factors")
 
-    st.markdown("""
-    **Lifestyle Tips**
-    - Maintain a balanced diet
-    - Exercise regularly
-    - Reduce stress through mindfulness or yoga
-    - Get adequate sleep
+    if cycle_signal >= 3:
+        st.write("- Significant menstrual irregularity detected")
+    if insulin_signal >= 4:
+        st.write("- Strong metabolic / insulin-related signals")
+    if stress_signal >= 6:
+        st.write("- High stress and adrenal load")
+    if androgen_signal >= 3:
+        st.write("- Noticeable androgen-related symptoms")
+    if inflammation_signal >= 3:
+        st.write("- Pain and inflammation indicators present")
 
-    **When to Consult a Doctor**
-    - Persistent irregular periods
-    - Severe fatigue or pain
-    - Sudden weight changes
-    """)
+    st.info(
+        "This is an early pattern-detection system for awareness only. "
+        "It is not a medical diagnosis."
+    )
+    # -----------------------------
+    # STEP 5: FOLLOW-UP & NEXT STEPS
+    # -----------------------------
+    st.markdown("## 🔁 Step 5: Suggested Follow-up")
 
-    st.success("💚 You are not alone. Awareness is the first step.")
+    if risk_level == "High Risk":
+        st.error(
+            "### Immediate Attention Recommended\n"
+            "- Consider consulting a gynecologist or endocrinologist\n"
+            "- Track menstrual cycle, mood, sleep, and diet daily for 4–6 weeks\n"
+            "- Avoid delaying evaluation if symptoms worsen"
+        )
 
-# -----------------------------------
-# ABOUT PAGE
-# -----------------------------------
-elif page == "About":
-    st.title("ℹ️ About This Project")
+    elif risk_level == "Moderate Risk":
+        st.warning(
+            "### Active Monitoring Suggested\n"
+            "- Track symptoms weekly (cycle regularity, stress, cravings)\n"
+            "- Introduce lifestyle adjustments (sleep, diet, stress reduction)\n"
+            "- Reassess patterns in 3–4 weeks"
+        )
 
-    st.write("""
-    This project is a **hackathon prototype** built to demonstrate
-    how technology can support **female healthcare awareness**.
+    else:
+        st.success(
+            "### Preventive Care Advised\n"
+            "- Maintain current healthy routines\n"
+            "- Monitor cycle and stress levels monthly\n"
+            "- Seek medical advice if new symptoms appear"
+        )
 
-    **Technology Used**
-    - Python
-    - Streamlit
+    # PCOS-type specific note
+    st.markdown("### 🧭 PCOS-Type Focus")
 
-    **Disclaimer**
-    This application is for educational purposes only.
-    """)
+    if "Adrenal" in pcos_type:
+        st.write(
+            "- Emphasize stress management, sleep hygiene, and burnout prevention\n"
+            "- Cortisol regulation plays a key role in this pattern"
+        )
+
+    elif "Insulin" in pcos_type:
+        st.write(
+            "- Focus on blood sugar stability and dietary consistency\n"
+            "- Metabolic regulation is central to this pattern"
+        )
+
+    elif "Lean" in pcos_type:
+        st.write(
+            "- Hormonal regulation may occur without weight-related indicators\n"
+            "- Cycle tracking is especially important"
+        )
+
+    elif "Inflammatory" in pcos_type:
+        st.write(
+            "- Address pain, fatigue, and inflammatory triggers\n"
+            "- Recovery and rest cycles are important"
+        )
