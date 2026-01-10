@@ -188,3 +188,133 @@ if submit:
         No dominant PCOS pattern detected.
         Maintain healthy routines and reassess monthly.
         """)
+    # -------------------------------------------------
+    # STEP 6: DO I NEED A DOCTOR?
+    # -------------------------------------------------
+    st.markdown("## 🩺 Medical Consultation Guidance")
+
+    doctor_needed = False
+    reasons = []
+
+    scores = result["signals"]
+
+    if risk_level == "High Risk":
+        doctor_needed = True
+        reasons.append("overall high risk pattern")
+
+    if scores["cycle"] >= 3 and scores["inflammation"] >= 3:
+        doctor_needed = True
+        reasons.append("severe pain with cycle irregularity")
+
+    if scores["insulin"] >= 6:
+        reasons.append("strong metabolic indicators")
+
+    if doctor_needed:
+        st.error(
+            "### Medical Consultation Recommended\n"
+            f"Based on {', '.join(reasons)}, professional medical evaluation is advised."
+        )
+    else:
+        st.success(
+            "### Medical Consultation Not Urgent\n"
+            "Lifestyle-focused management and monitoring may be appropriate at this stage."
+        )
+
+    # -------------------------------------------------
+    # STEP 7: CONDITION EDUCATION (SAFE, NON-DIAGNOSTIC)
+    # -------------------------------------------------
+    st.markdown("## 📘 Understanding Common Conditions")
+
+    with st.expander("🔹 PCOS (Polycystic Ovary Syndrome)"):
+        st.write("""
+        PCOS is a hormonal condition involving ovulation irregularities,
+        androgen imbalance, and/or insulin resistance.
+
+        It presents differently in each individual.
+        """)
+
+    with st.expander("🔹 PCOD (Polycystic Ovarian Disease)"):
+        st.write("""
+        PCOD is often influenced by lifestyle and metabolic factors.
+        Many cases improve significantly with lifestyle changes.
+        """)
+
+    with st.expander("🔹 Endometriosis"):
+        st.write("""
+        Endometriosis involves tissue similar to the uterine lining
+        growing outside the uterus.
+
+        Severe or disabling menstrual pain is not normal and should be evaluated.
+        """)
+
+    # -------------------------------------------------
+    # STEP 8: LIFESTYLE PLAN (ONLY IF DOCTOR NOT URGENT)
+    # -------------------------------------------------
+    st.markdown("## 🌱 Lifestyle Focus")
+
+    if not doctor_needed:
+        if "Insulin" in pcos_type:
+            st.write("""
+            **Focus:** Blood sugar stability  
+            - Balanced meals with protein & fiber  
+            - Consistent eating schedule  
+            - Moderate exercise  
+            """)
+
+        elif "Adrenal" in pcos_type:
+            st.write("""
+            **Focus:** Stress & nervous system  
+            - Prioritize sleep  
+            - Reduce overexertion  
+            - Gentle movement & recovery  
+            """)
+
+        elif "Inflammatory" in pcos_type:
+            st.write("""
+            **Focus:** Recovery & inflammation  
+            - Adequate rest  
+            - Gentle activity  
+            - Symptom journaling  
+            """)
+
+        else:
+            st.write("""
+            **Focus:** Maintenance  
+            - Balanced diet  
+            - Regular movement  
+            - Monthly symptom tracking  
+            """)
+
+    # -------------------------------------------------
+    # STEP 9: EXPORTABLE HEALTH SUMMARY
+    # -------------------------------------------------
+    st.markdown("## 📄 Health Summary (For You / Doctor)")
+
+    report_text = f"""
+PCOS Health AI – Summary
+
+Risk Level: {risk_level}
+Detected Pattern: {pcos_type}
+
+Key Signals:
+- Cycle score: {scores['cycle']}
+- Stress score: {scores['stress']}
+- Insulin score: {scores['insulin']}
+- Androgen score: {scores['androgen']}
+- Inflammation score: {scores['inflammation']}
+
+Recommendation:
+{"Medical consultation recommended." if doctor_needed else "Lifestyle-focused monitoring advised."}
+
+Disclaimer:
+This is not a medical diagnosis.
+"""
+
+    st.text_area("Preview Report", report_text, height=250)
+
+    st.download_button(
+        label="📥 Download Report (Text)",
+        data=report_text,
+        file_name="pcos_health_summary.txt",
+        mime="text/plain"
+    )
