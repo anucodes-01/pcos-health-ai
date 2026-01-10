@@ -1,5 +1,9 @@
 import streamlit as st
+from utils.decision_engine import analyze_pcos_signals
 
+# -------------------------------------------------
+# APP HEADER
+# -------------------------------------------------
 st.title("PCOS Health AI")
 st.caption("Early pattern detection • Not a medical diagnosis")
 
@@ -71,200 +75,116 @@ diet_pattern = st.selectbox(
     ["Balanced", "High sugar / processed", "Low-carb / controlled", "Irregular"]
 )
 
+# -------------------------------------------------
+# ANALYSIS BUTTON
+# -------------------------------------------------
 submit = st.button("Analyze My Health Patterns")
+
 if submit:
     st.markdown("## 🧠 Step 2: Understanding Your Health Signals")
 
-    # -----------------------------
-    # SIGNAL EXTRACTION
-    # -----------------------------
-    cycle_signal = 0
-    stress_signal = 0
-    insulin_signal = 0
-    androgen_signal = 0
-    inflammation_signal = 0
-
-    # Cycle irregularity
-    if cycle_length == "Irregular (varies frequently)":
-        cycle_signal += 2
-    elif cycle_length == "Absent for months":
-        cycle_signal += 3
-
-    # Stress & adrenal signals (threshold-based)
-    if stress_level >= 7:
-        stress_signal += 4
-    elif stress_level >= 4:
-        stress_signal += 2
-
-    if sleep_quality == "Disturbed":
-        stress_signal += 1
-    elif sleep_quality == "Insomnia / very poor":
-        stress_signal += 2
-
-    if mood_changes == "Frequently":
-        stress_signal += 2
-
-    # Insulin resistance signals
-    if sugar_cravings == "Frequently":
-        insulin_signal += 3
-    elif sugar_cravings == "Occasionally":
-        insulin_signal += 1
-
-    if weight_change in ["Weight gain", "Fluctuates"]:
-        insulin_signal += 2
-
-    # Androgen signals
-    if facial_hair == "Noticeable":
-        androgen_signal += 3
-    elif facial_hair == "Mild":
-        androgen_signal += 1
-
-    # Inflammatory signals
-    if period_pain == "Often":
-        inflammation_signal += 2
-
-    if sleep_quality != "Good":
-        inflammation_signal += 1
-
-    # -----------------------------
-    # PCOS TYPE DETECTION
-    # -----------------------------
-    pcos_type = "Low / Unclear PCOS Pattern"
-    explanation = ""
-
-    if stress_signal >= 7 and insulin_signal < 4:
-        pcos_type = "Adrenal PCOS (Stress-driven)"
-        explanation = (
-            "Your responses show strong stress and adrenal-related signals. "
-            "This PCOS type is commonly underdiagnosed and linked to chronic stress."
-        )
-
-    elif insulin_signal >= 6:
-        pcos_type = "Insulin-Resistant PCOS"
-        explanation = (
-            "Metabolic indicators such as sugar cravings and weight changes "
-            "suggest insulin resistance, a common PCOS driver."
-        )
-
-    elif cycle_signal >= 3 and insulin_signal <= 2:
-        pcos_type = "Lean PCOS"
-        explanation = (
-            "Despite limited metabolic symptoms, your menstrual irregularities "
-            "suggest a hormonal imbalance consistent with Lean PCOS."
-        )
-
-    elif inflammation_signal >= 3:
-        pcos_type = "Inflammatory PCOS"
-        explanation = (
-            "Pain, fatigue, and inflammatory indicators dominate your symptom pattern."
-        )
-
-    # -----------------------------
-    # OVERALL PCOS RISK SCORING
-    # -----------------------------
-    total_risk_score = (
-        cycle_signal +
-        stress_signal +
-        insulin_signal +
-        androgen_signal +
-        inflammation_signal
+    # 🔹 CALL DECISION ENGINE (CORE AI LOGIC)
+    result = analyze_pcos_signals(
+        cycle_length=cycle_length,
+        period_pain=period_pain,
+        stress_level=stress_level,
+        sleep_quality=sleep_quality,
+        mood_changes=mood_changes,
+        sugar_cravings=sugar_cravings,
+        weight_change=weight_change,
+        facial_hair=facial_hair
     )
 
-    if total_risk_score <= 6:
-        risk_level = "Low Risk"
-        risk_color = "green"
-    elif total_risk_score <= 12:
-        risk_level = "Moderate Risk"
-        risk_color = "orange"
-    else:
-        risk_level = "High Risk"
-        risk_color = "red"
-
-    # -----------------------------
-    # DISPLAY RESULTS
-    # -----------------------------
+    # -------------------------------------------------
+    # STEP 3: RISK ASSESSMENT
+    # -------------------------------------------------
     st.markdown("## ⚠️ Step 3: Overall PCOS Risk Assessment")
 
-    st.progress(min(total_risk_score / 20, 1.0))
+    risk_score = result["risk_score"]
+    risk_level = result["risk_level"]
+
+    st.progress(min(risk_score / 20, 1.0))
+
+    color = "green" if risk_level == "Low Risk" else "orange" if risk_level == "Moderate Risk" else "red"
 
     st.markdown(
-        f"<h3 style='color:{risk_color}'>Risk Level: {risk_level}</h3>",
+        f"<h3 style='color:{color}'>Risk Level: {risk_level}</h3>",
         unsafe_allow_html=True
     )
 
+    # -------------------------------------------------
+    # STEP 4: PCOS PATTERN
+    # -------------------------------------------------
     st.markdown("## 🔍 Step 4: Detected PCOS Pattern")
-    st.success(f"**Detected Pattern:** {pcos_type}")
-    st.write(explanation)
+    st.success(f"**Detected Pattern:** {result['pcos_type']}")
+    st.write(result["explanation"])
 
+    # -------------------------------------------------
+    # CONTRIBUTING FACTORS
+    # -------------------------------------------------
     st.markdown("### 🔎 Key Contributing Factors")
 
-    if cycle_signal >= 3:
+    signals = result["signals"]
+
+    if signals["cycle"] >= 3:
         st.write("- Significant menstrual irregularity detected")
-    if insulin_signal >= 4:
+    if signals["insulin"] >= 4:
         st.write("- Strong metabolic / insulin-related signals")
-    if stress_signal >= 6:
+    if signals["stress"] >= 6:
         st.write("- High stress and adrenal load")
-    if androgen_signal >= 3:
+    if signals["androgen"] >= 3:
         st.write("- Noticeable androgen-related symptoms")
-    if inflammation_signal >= 3:
+    if signals["inflammation"] >= 3:
         st.write("- Pain and inflammation indicators present")
 
     st.info(
         "This is an early pattern-detection system for awareness only. "
         "It is not a medical diagnosis."
     )
-    # -----------------------------
-    # STEP 5: FOLLOW-UP & NEXT STEPS
-    # -----------------------------
-    st.markdown("## 🔁 Step 5: Suggested Follow-up")
 
-    if risk_level == "High Risk":
-        st.error(
-            "### Immediate Attention Recommended\n"
-            "- Consider consulting a gynecologist or endocrinologist\n"
-            "- Track menstrual cycle, mood, sleep, and diet daily for 4–6 weeks\n"
-            "- Avoid delaying evaluation if symptoms worsen"
-        )
+    # -------------------------------------------------
+    # STEP 5: FOLLOW-UP GUIDANCE
+    # -------------------------------------------------
+    st.markdown("## 🔁 Step 5: Suggested Follow-up & Care Focus")
 
-    elif risk_level == "Moderate Risk":
-        st.warning(
-            "### Active Monitoring Suggested\n"
-            "- Track symptoms weekly (cycle regularity, stress, cravings)\n"
-            "- Introduce lifestyle adjustments (sleep, diet, stress reduction)\n"
-            "- Reassess patterns in 3–4 weeks"
-        )
-
-    else:
-        st.success(
-            "### Preventive Care Advised\n"
-            "- Maintain current healthy routines\n"
-            "- Monitor cycle and stress levels monthly\n"
-            "- Seek medical advice if new symptoms appear"
-        )
-
-    # PCOS-type specific note
-    st.markdown("### 🧭 PCOS-Type Focus")
+    pcos_type = result["pcos_type"]
 
     if "Adrenal" in pcos_type:
-        st.write(
-            "- Emphasize stress management, sleep hygiene, and burnout prevention\n"
-            "- Cortisol regulation plays a key role in this pattern"
-        )
+        st.success("🧘 Focus Area: Stress & Nervous System Regulation")
+        st.write("""
+        - Prioritize sleep consistency
+        - Reduce chronic stress
+        - Avoid overtraining
+        - Consider cortisol & thyroid evaluation
+        """)
 
     elif "Insulin" in pcos_type:
-        st.write(
-            "- Focus on blood sugar stability and dietary consistency\n"
-            "- Metabolic regulation is central to this pattern"
-        )
+        st.success("🍽️ Focus Area: Metabolic Health")
+        st.write("""
+        - Stabilize blood sugar
+        - Reduce refined sugar
+        - Maintain regular meals
+        - Test fasting insulin & HbA1c
+        """)
 
     elif "Lean" in pcos_type:
-        st.write(
-            "- Hormonal regulation may occur without weight-related indicators\n"
-            "- Cycle tracking is especially important"
-        )
+        st.success("📊 Focus Area: Hormonal Balance")
+        st.write("""
+        - Track ovulation & cycle length
+        - Avoid extreme dieting
+        - Monitor LH/FSH ratio
+        """)
 
     elif "Inflammatory" in pcos_type:
-        st.write(
-            "- Address pain, fatigue, and inflammatory triggers\n"
-            "- Recovery and rest cycles are important"
-        )
+        st.success("🔥 Focus Area: Inflammation Management")
+        st.write("""
+        - Improve recovery & rest
+        - Identify inflammatory triggers
+        - Track pain patterns
+        """)
+
+    else:
+        st.info("""
+        No dominant PCOS pattern detected.
+        Maintain healthy routines and reassess monthly.
+        """)
