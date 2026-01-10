@@ -107,6 +107,13 @@ def analyze_pcos_signals(
         androgen_signal +
         inflammation_signal
     )
+    
+    # -----------------------------
+    # AI CONFIDENCE ESTIMATION
+    # -----------------------------
+    max_possible_score = 20
+    confidence_score = round((total_risk_score / max_possible_score) * 100, 1)
+
 
     if total_risk_score <= 6:
         risk_level = "Low Risk"
@@ -115,11 +122,24 @@ def analyze_pcos_signals(
     else:
         risk_level = "High Risk"
 
+         # -----------------------------
+    # ML MODEL HOOK (FUTURE USE)
+    # -----------------------------
+    """
+    def ml_predict(features):
+        # Placeholder for future ML model integration
+        # model = joblib.load("model/pcos_model.pkl")
+        # return model.predict_proba(features)
+        pass
+    """
+
+
     return {
         "pcos_type": pcos_type,
         "explanation": explanation,
         "risk_score": total_risk_score,
         "risk_level": risk_level,
+        "confidence": confidence_score,
         "signals": {
             "cycle": cycle_signal,
             "stress": stress_signal,
