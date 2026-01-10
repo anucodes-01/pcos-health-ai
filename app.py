@@ -118,6 +118,15 @@ if submit:
     st.markdown("## 🔍 Step 4: Detected PCOS Pattern")
     st.success(f"**Detected Pattern:** {result['pcos_type']}")
     st.write(result["explanation"])
+    st.markdown(f"**AI Confidence:** {result['confidence']}%")
+    st.progress(result["confidence"] / 100)
+    st.caption(
+    "Confidence is derived from transparent clinical signal weighting, "
+    "not black-box machine learning."
+)
+    st.markdown(f"**AI Confidence:** {result['confidence']}%")
+    st.caption("Confidence derived from transparent clinical signal weighting, not black-box ML.")
+
 
     # -------------------------------------------------
     # CONTRIBUTING FACTORS
