@@ -7,7 +7,11 @@ from utils.translations import set_language, get_language
 
 def render_language_switcher():
     """Render language switcher in top right corner"""
-    current_lang = get_language()
+    # Initialize language if not set
+    if 'language' not in st.session_state:
+        st.session_state['language'] = 'en'
+    
+    current_lang = st.session_state.get('language', 'en')
     
     # Create columns to push to right
     col1, col2 = st.columns([10, 1])
@@ -18,14 +22,20 @@ def render_language_switcher():
             'Hindi': 'hi'
         }
         
+        # Get current selection index
+        current_index = 0 if current_lang == 'en' else 1
+        
         selected = st.selectbox(
             "🌐",
             options=list(lang_options.keys()),
-            index=0 if current_lang == 'en' else 1,
-            key="lang_switcher",
+            index=current_index,
+            key="lang_switcher_select",
             label_visibility="collapsed"
         )
         
-        if lang_options[selected] != current_lang:
-            set_language(lang_options[selected])
+        selected_lang = lang_options[selected]
+        
+        # Update language if changed
+        if selected_lang != current_lang:
+            st.session_state['language'] = selected_lang
             st.rerun()

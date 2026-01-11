@@ -7,6 +7,7 @@ Streamlit automatically creates navigation from the pages/ directory.
 """
 
 import streamlit as st
+from utils.translations import get_language
 
 st.set_page_config(
     page_title="PCOS Health AI",
@@ -14,6 +15,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Initialize language
+if 'language' not in st.session_state:
+    st.session_state['language'] = 'en'
 
 # Main page content (redirects to Home)
 st.title("PCOS Health AI")

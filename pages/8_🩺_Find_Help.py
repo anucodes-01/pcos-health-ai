@@ -4,7 +4,7 @@ Find Help - Connect with healthcare professionals with location-based search
 
 import streamlit as st
 from utils.doctors_data import get_doctors_by_location
-from utils.translations import t
+from utils.translations import t, get_language
 from utils.language_switcher import render_language_switcher
 
 st.set_page_config(
@@ -12,6 +12,10 @@ st.set_page_config(
     page_icon="🩺",
     layout="wide"
 )
+
+# Initialize language
+if 'language' not in st.session_state:
+    st.session_state['language'] = 'en'
 
 # Language switcher
 render_language_switcher()

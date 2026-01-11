@@ -5,7 +5,7 @@ Community - Safe space for support and sharing with persistent posts
 import streamlit as st
 from utils.community_storage import load_posts, save_post, get_recent_posts
 from utils.auth import is_authenticated, get_current_user
-from utils.translations import t
+from utils.translations import t, get_language
 from utils.language_switcher import render_language_switcher
 
 st.set_page_config(
@@ -13,6 +13,10 @@ st.set_page_config(
     page_icon="👥",
     layout="wide"
 )
+
+# Initialize language
+if 'language' not in st.session_state:
+    st.session_state['language'] = 'en'
 
 # Language switcher
 render_language_switcher()
