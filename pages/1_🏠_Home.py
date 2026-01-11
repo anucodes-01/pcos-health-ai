@@ -3,12 +3,31 @@ Home Page - Trust-building, clear value proposition, calm entry point
 """
 
 import streamlit as st
+from utils.auth import is_authenticated, get_current_user, logout_user
+from utils.language_switcher import render_language_switcher
 
 st.set_page_config(
     page_title="PCOS Health AI - Home",
     page_icon="🏠",
     layout="wide"
 )
+
+# Language switcher
+render_language_switcher()
+
+# Authentication status
+if is_authenticated():
+    user = get_current_user()
+    col1, col2 = st.columns([10, 1])
+    with col1:
+        st.markdown(f"**Welcome, {user['name']}!**")
+    with col2:
+        if st.button("Logout"):
+            logout_user()
+            st.rerun()
+else:
+    if st.button("Login / Register"):
+        st.switch_page("pages/0_🔐_Authentication.py")
 
 # Hero Section
 st.title("PCOS Health AI")

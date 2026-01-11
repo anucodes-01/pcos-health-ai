@@ -1,8 +1,11 @@
 """
-Find Help - Connect with healthcare professionals (demo listings)
+Find Help - Connect with healthcare professionals with location-based search
 """
 
 import streamlit as st
+from utils.doctors_data import get_doctors_by_location
+from utils.translations import t
+from utils.language_switcher import render_language_switcher
 
 st.set_page_config(
     page_title="PCOS Health AI - Find Help",
@@ -10,7 +13,10 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🩺 Find Help")
+# Language switcher
+render_language_switcher()
+
+st.title("Find Help")
 st.markdown("### Connect with Healthcare Professionals")
 
 # When to See a Doctor Section
@@ -37,60 +43,40 @@ with col2:
     - New or worsening symptoms
     """)
 
-# Nearby Gynecologists (Demo Data)
+# Location Input
 st.markdown("---")
-st.markdown("### 🏥 Nearby Gynecologists (Demo Data)")
+st.markdown("### Find Doctors Near You")
+location = st.text_input(
+    "Enter your city name (e.g., Mumbai, Delhi, Bangalore)",
+    placeholder="Enter city name",
+    key="doctor_location"
+)
 
-st.error("""
-⚠️ **Disclaimer:** The following listings are demo/example data only. 
-They are not endorsements. Please research and verify any healthcare provider independently.
-""")
-
-# Demo Listings
-doctors = [
-    {
-        "name": "Dr. Sarah Johnson",
-        "specialization": "Reproductive Health, PCOS",
-        "location": "Downtown Medical Center",
-        "distance": "2.5 miles"
-    },
-    {
-        "name": "Dr. Maria Rodriguez",
-        "specialization": "Women's Health, Endocrinology",
-        "location": "City Health Clinic",
-        "distance": "3.8 miles"
-    },
-    {
-        "name": "Dr. Priya Patel",
-        "specialization": "Gynecology, Hormonal Disorders",
-        "location": "Community Hospital",
-        "distance": "5.2 miles"
-    },
-    {
-        "name": "Dr. Emily Chen",
-        "specialization": "Reproductive Endocrinology",
-        "location": "Women's Health Center",
-        "distance": "6.1 miles"
-    },
-    {
-        "name": "Dr. Jennifer Williams",
-        "specialization": "Gynecology, PCOS Management",
-        "location": "Regional Medical Center",
-        "distance": "7.5 miles"
-    }
-]
-
-for i, doctor in enumerate(doctors, 1):
-    with st.expander(f"👩‍⚕️ {doctor['name']} - {doctor['distance']} away"):
-        st.markdown(f"**Specialization:** {doctor['specialization']}")
-        st.markdown(f"**Location:** {doctor['location']}")
-        st.caption("🔗 Contact information available through healthcare directories")
-
-# Location Input (Future Scope)
-st.markdown("---")
-st.markdown("### 📍 Find Doctors Near You")
-location = st.text_input("Enter your city or ZIP code (Future feature)")
-st.info("🚀 **Coming Soon:** Real-time location-based doctor search")
+# Get doctors based on location
+if location:
+    doctors = get_doctors_by_location(location)
+    
+    st.markdown("---")
+    st.markdown(f"### Nearby Doctors in {location.title()}")
+    
+    st.markdown("""
+    <div style='padding: 12px; border-radius: 8px; background-color: #FFE5F1; border-left: 4px solid #D9469F; margin-bottom: 20px;'>
+        <p style='color: #8B4A6B; margin: 0;'><strong>Disclaimer:</strong> The following listings are demo/example data only. 
+        They are not endorsements. Please research and verify any healthcare provider independently.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    for i, doctor in enumerate(doctors, 1):
+        with st.expander(f"{doctor['name']} - {doctor['distance']} away | Rating: {doctor.get('rating', 'N/A')}"):
+            st.markdown(f"**Specialization:** {doctor['specialization']}")
+            st.markdown(f"**Location:** {doctor['location']}")
+            if 'phone' in doctor:
+                st.markdown(f"**Contact:** {doctor['phone']}")
+            if 'rating' in doctor:
+                st.markdown(f"**Rating:** {doctor['rating']}/5.0")
+            st.caption("Contact information available through healthcare directories")
+else:
+    st.info("Enter a city name above to find nearby doctors")
 
 # Teleconsult Options
 st.markdown("---")
