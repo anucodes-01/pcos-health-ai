@@ -3,6 +3,8 @@ Multi-language translation support
 Supports English and Hindi
 """
 
+import streamlit as st
+
 TRANSLATIONS = {
     'en': {
         # Navigation
