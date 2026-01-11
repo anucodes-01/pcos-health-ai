@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🔍 Health Check")
+st.title("Health Check")
 st.markdown("### Structured Assessment of Your Health Patterns")
 
 # Step 1: Personal & Cycle Information
@@ -100,7 +100,7 @@ with st.expander("Step 5: Optional - Family History"):
     )
 
 # Analysis Button
-if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_width=True):
+if st.button("Analyze My Health Patterns", type="primary", use_container_width=True):
     # Collect all inputs
     user_inputs = {
         "age": age,
@@ -138,20 +138,17 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     risk_score = result['risk_score']
     
     if risk_level == "Low Risk":
-        icon = "✅"
-        st.success(f"## {icon} Risk Level: {risk_level}")
+        st.success(f"## Risk Level: {risk_level}")
     elif risk_level == "Moderate Risk":
-        icon = "⚠️"
-        st.warning(f"## {icon} Risk Level: {risk_level}")
+        st.warning(f"## Risk Level: {risk_level}")
     else:
-        icon = "🔴"
-        st.error(f"## {icon} Risk Level: {risk_level}")
+        st.error(f"## Risk Level: {risk_level}")
     
     st.progress(min(risk_score / 20, 1.0))
     
     # PCOS Type
     st.markdown("---")
-    st.markdown(f"## 🔍 Detected Pattern: {result['pcos_type']}")
+    st.markdown(f"## Detected Pattern: {result['pcos_type']}")
     st.info(result['explanation'])
     st.markdown(f"**AI Confidence:** {result['confidence']}%")
     st.progress(result['confidence'] / 100)
@@ -159,7 +156,7 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     
     # Contributing Factors
     st.markdown("---")
-    st.markdown("### 🔎 Key Contributing Factors")
+    st.markdown("### Key Contributing Factors")
     signals = result['signals']
     factors = []
     
@@ -182,7 +179,7 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     
     # Doctor Consultation
     st.markdown("---")
-    st.markdown("### 🩺 Medical Consultation Guidance")
+    st.markdown("### Medical Consultation Guidance")
     if result.get('doctor_needed', False):
         st.error("**Medical Consultation Recommended**")
         reasons = result.get('doctor_reasons', [])
@@ -194,21 +191,21 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     
     # Condition Education
     st.markdown("---")
-    st.markdown("### 📘 Understanding Common Conditions")
+    st.markdown("### Understanding Common Conditions")
     
-    with st.expander("🔹 PCOS (Polycystic Ovary Syndrome)"):
+    with st.expander("PCOS (Polycystic Ovary Syndrome)"):
         st.write("""
         PCOS is a hormonal condition involving ovulation irregularities,
         androgen imbalance, and/or insulin resistance. It presents differently in each individual.
         """)
     
-    with st.expander("🔹 PCOD (Polycystic Ovarian Disease)"):
+    with st.expander("PCOD (Polycystic Ovarian Disease)"):
         st.write("""
         PCOD is often influenced by lifestyle and metabolic factors.
         Many cases improve significantly with lifestyle changes.
         """)
     
-    with st.expander("🔹 Endometriosis"):
+    with st.expander("Endometriosis"):
         st.write("""
         Endometriosis involves tissue similar to the uterine lining
         growing outside the uterus. Severe or disabling menstrual pain is not normal and should be evaluated.
@@ -217,13 +214,13 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     # Lifestyle Plan Link
     if not result.get('doctor_needed', False):
         st.markdown("---")
-        st.info("💡 **Next Step:** Check out your personalized Lifestyle Plan!")
-        if st.button("🌱 View Lifestyle Plan", use_container_width=True):
+        st.info("**Next Step:** Check out your personalized Lifestyle Plan!")
+        if st.button("View Lifestyle Plan", use_container_width=True):
             st.switch_page("pages/5_🌱_Lifestyle_Plan.py")
     
     # Report Generation
     st.markdown("---")
-    st.markdown("### 📄 Health Summary (For You / Doctor)")
+    st.markdown("### Health Summary (For You / Doctor)")
     
     reports = generate_summary(result, user_inputs)
     
@@ -232,7 +229,7 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     with tab1:
         st.text_area("Preview", reports['user_report'], height=300, key="user_preview")
         st.download_button(
-            "📥 Download User Report",
+            "Download User Report",
             reports['user_report'],
             "pcos_health_summary.txt",
             "text/plain",
@@ -242,7 +239,7 @@ if st.button("🔍 Analyze My Health Patterns", type="primary", use_container_wi
     with tab2:
         st.text_area("Preview", reports['doctor_summary'], height=300, key="doc_preview")
         st.download_button(
-            "📥 Download Doctor Summary",
+            "Download Doctor Summary",
             reports['doctor_summary'],
             "pcos_clinical_summary.txt",
             "text/plain",
@@ -255,10 +252,15 @@ if 'health_check_result' in st.session_state and 'user_inputs' in st.session_sta
     user_inputs = st.session_state['user_inputs']
     
     st.markdown("---")
-    st.info("💡 You have previously completed a health check. Results are stored in your session.")
-    if st.button("📄 View Previous Results", use_container_width=True):
+    st.info("You have previously completed a health check. Results are stored in your session.")
+    if st.button("View Previous Results", use_container_width=True):
         st.rerun()
 
 # Disclaimer
 st.markdown("---")
-st.error("⚠️ **Disclaimer:** This tool is for awareness only. It does not provide medical diagnosis.")
+st.markdown("""
+<div style='padding: 16px; border-radius: 8px; background-color: #FFE5F1; border-left: 4px solid #D9469F;'>
+    <p style='color: #8B4A6B; margin: 0;'><strong>Disclaimer:</strong> This tool is for awareness only. 
+    It does not provide medical diagnosis.</p>
+</div>
+""", unsafe_allow_html=True)

@@ -18,45 +18,50 @@ st.markdown("**Understand • Decide • Feel Supported**")
 st.markdown("---")
 
 # What We Do / Don't Do
-st.markdown("### 📋 What This Tool Does")
+st.markdown("### What This Tool Does")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.success("""
-    ### ✅ What This Tool DOES
-    
-    - **Helps you understand** your body signals
-    - **Reduces confusion** and anxiety
-    - **Guides you** on when to see a doctor
-    - **Provides structured** education
-    - **Offers lifestyle** guidance
-    - **Generates doctor-ready** summaries
-    - **Supports you** emotionally
-    """)
+    st.markdown("""
+    <div style='padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #FFE5F1 0%, #F8E8F0 100%); border-left: 4px solid #D9469F;'>
+        <h3 style='color: #8B4A6B; margin-top: 0;'>What This Tool Does</h3>
+        <ul style='color: #2D1B3D;'>
+            <li><strong>Helps you understand</strong> your body signals</li>
+            <li><strong>Reduces confusion</strong> and anxiety</li>
+            <li><strong>Guides you</strong> on when to see a doctor</li>
+            <li><strong>Provides structured</strong> education</li>
+            <li><strong>Offers lifestyle</strong> guidance</li>
+            <li><strong>Generates doctor-ready</strong> summaries</li>
+            <li><strong>Supports you</strong> emotionally</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    st.warning("""
-    ### ❌ What This Tool DOES NOT Do
-    
-    - ❌ Provide medical diagnosis
-    - ❌ Prescribe medications
-    - ❌ Replace healthcare professionals
-    - ❌ Store your personal data
-    - ❌ Make medical claims
-    """)
+    st.markdown("""
+    <div style='padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #FFF0F5 0%, #FFE5F1 100%); border-left: 4px solid #C77A9E;'>
+        <h3 style='color: #8B4A6B; margin-top: 0;'>What This Tool Does Not Do</h3>
+        <ul style='color: #2D1B3D;'>
+            <li>Provide medical diagnosis</li>
+            <li>Prescribe medications</li>
+            <li>Replace healthcare professionals</li>
+            <li>Store your personal data</li>
+            <li>Make medical claims</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown("---")
 
 # Feature Cards
-st.markdown("### 🎯 Explore Our Features")
+st.markdown("### Explore Our Features")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown("""
-    <div style='padding: 20px; border-radius: 10px; background-color: #E8D5FF; text-align: center; min-height: 150px;'>
-        <h2>🔍</h2>
-        <h4>Health Check</h4>
-        <p>Structured assessment of your health patterns</p>
+    <div style='padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #F8E8F0 0%, #FFE5F1 100%); text-align: center; min-height: 180px; box-shadow: 0 2px 8px rgba(217, 70, 159, 0.1); border: 1px solid #FFD5E5;'>
+        <h3 style='color: #D9469F; margin-top: 0;'>Health Check</h3>
+        <p style='color: #2D1B3D;'>Structured assessment of your health patterns</p>
     </div>
     """, unsafe_allow_html=True)
     if st.button("Go to Health Check", key="home_hc", use_container_width=True):
@@ -64,10 +69,9 @@ with col1:
 
 with col2:
     st.markdown("""
-    <div style='padding: 20px; border-radius: 10px; background-color: #FFD5E5; text-align: center; min-height: 150px;'>
-        <h2>💬</h2>
-        <h4>AI Assistant</h4>
-        <p>Guided conversation for clarification</p>
+    <div style='padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #FFE5F1 0%, #F8E8F0 100%); text-align: center; min-height: 180px; box-shadow: 0 2px 8px rgba(217, 70, 159, 0.1); border: 1px solid #FFD5E5;'>
+        <h3 style='color: #D9469F; margin-top: 0;'>AI Assistant</h3>
+        <p style='color: #2D1B3D;'>Guided conversation for clarification</p>
     </div>
     """, unsafe_allow_html=True)
     if st.button("Go to AI Assistant", key="home_ai", use_container_width=True):
@@ -75,10 +79,9 @@ with col2:
 
 with col3:
     st.markdown("""
-    <div style='padding: 20px; border-radius: 10px; background-color: #D5FFE8; text-align: center; min-height: 150px;'>
-        <h2>📚</h2>
-        <h4>Learn Conditions</h4>
-        <p>Educational content about PCOS, PCOD, Endometriosis</p>
+    <div style='padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #F0E5F5 0%, #F8E8F0 100%); text-align: center; min-height: 180px; box-shadow: 0 2px 8px rgba(217, 70, 159, 0.1); border: 1px solid #E8D5F0;'>
+        <h3 style='color: #D9469F; margin-top: 0;'>Learn Conditions</h3>
+        <p style='color: #2D1B3D;'>Educational content about PCOS, PCOD, Endometriosis</p>
     </div>
     """, unsafe_allow_html=True)
     if st.button("Learn More", key="home_learn", use_container_width=True):
@@ -86,10 +89,9 @@ with col3:
 
 with col4:
     st.markdown("""
-    <div style='padding: 20px; border-radius: 10px; background-color: #FFE8D5; text-align: center; min-height: 150px;'>
-        <h2>👥</h2>
-        <h4>Community</h4>
-        <p>Safe space for support and sharing</p>
+    <div style='padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #FFE5F1 0%, #F0E5F5 100%); text-align: center; min-height: 180px; box-shadow: 0 2px 8px rgba(217, 70, 159, 0.1); border: 1px solid #FFD5E5;'>
+        <h3 style='color: #D9469F; margin-top: 0;'>Community</h3>
+        <p style='color: #2D1B3D;'>Safe space for support and sharing</p>
     </div>
     """, unsafe_allow_html=True)
     if st.button("Visit Community", key="home_comm", use_container_width=True):
@@ -97,28 +99,35 @@ with col4:
 
 st.markdown("---")
 
-# Video Section (placeholder)
-st.markdown("### 📹 How It Works")
-st.info("""
-🚀 **Video coming soon!** In the meantime, explore our features above to learn more about how PCOS Health AI works.
-""")
+# How It Works Section
+st.markdown("---")
+st.markdown("### How It Works")
+st.markdown("""
+<div style='padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #FFF5F8 0%, #F8E8F0 100%); border-left: 4px solid #D9469F;'>
+    <p style='color: #2D1B3D; margin: 0;'>Our platform uses explainable AI to help you understand your health patterns. 
+    Start with a comprehensive health check, get personalized insights, and access educational resources 
+    to make informed decisions about your health.</p>
+</div>
+""", unsafe_allow_html=True)
 
 # CTA Buttons
 st.markdown("---")
-st.markdown("### 🚀 Get Started")
+st.markdown("### Get Started")
 col1, col2 = st.columns(2)
 
 with col1:
-    if st.button("🚀 Start Health Check", type="primary", use_container_width=True, key="cta_hc"):
+    if st.button("Start Health Check", type="primary", use_container_width=True, key="cta_hc"):
         st.switch_page("pages/2_🔍_Health_Check.py")
 
 with col2:
-    if st.button("💬 Talk to AI Assistant", use_container_width=True, key="cta_ai"):
+    if st.button("Talk to AI Assistant", use_container_width=True, key="cta_ai"):
         st.switch_page("pages/3_💬_AI_Assistant.py")
 
 # Disclaimer Banner
 st.markdown("---")
-st.error("""
-⚠️ **Disclaimer:** This tool is for awareness and support only. It does not provide medical diagnosis. 
-Always consult healthcare professionals for medical advice.
-""")
+st.markdown("""
+<div style='padding: 16px; border-radius: 8px; background-color: #FFE5F1; border-left: 4px solid #D9469F;'>
+    <p style='color: #8B4A6B; margin: 0;'><strong>Disclaimer:</strong> This tool is for awareness and support only. 
+    It does not provide medical diagnosis. Always consult healthcare professionals for medical advice.</p>
+</div>
+""", unsafe_allow_html=True)
